@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Network Operation Center – IMS613 Individual Assignment</title>
+<title>Network Operation Center – IMS613</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
 html,body{margin:0;height:100%;overflow:hidden;background:#0b0e12;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#e8eef5}
@@ -36,7 +36,7 @@ button:focus-visible{outline:2px solid #ffb02e;outline-offset:2px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-// ===== EDIT YOUR DETAILS HERE (shown on the intro card) =====
+// ===== EDIT YOUR DETAILS HERE =====
 const STUDENT = {
   "Full name":"YOUR FULL NAME",
   "Student ID":"2024XXXXXX",
@@ -47,7 +47,7 @@ const STUDENT = {
   "Prepared for":"LECTURER NAME",
   "Date":"DD Month YYYY"
 };
-// ============================================================
+// ===================================
 const T=THREE,$=id=>document.getElementById(id);
 $('info').innerHTML=Object.entries(STUDENT).map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('');
 document.querySelectorAll('#intro img').forEach(i=>i.onerror=()=>i.style.display='none');
@@ -66,7 +66,7 @@ function ctex(w,h,draw,rx=1,ry=1){const c=document.createElement('canvas');c.wid
 function tplane(w,h,tex,x,y,z,ry=0){const m=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:tex}));m.position.set(x,y,z);m.rotation.y=ry;scene.add(m);return m}
 const rnd=(a,b)=>a+Math.random()*(b-a),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
-// ---------- Lights & Lighting System ----------
+// ---------- Lights ----------
 scene.add(new T.HemisphereLight(0xcfe0f5,0x1c2229,.6));
 [[-3.5,3.2,-1],[3.5,3.2,-1],[-3.5,3.2,3],[3.5,3.2,3]].forEach(p=>{const l=new T.PointLight(0xe6f0ff,.45,14);l.position.set(...p);scene.add(l)});
 const wl=new T.PointLight(0x4fc3e8,.7,9);wl.position.set(0,2,-4);scene.add(wl);
@@ -87,7 +87,7 @@ box(14,.2,5.15,platM,0,.1,2.425);box(14,.4,2.85,platM,0,.2,3.575);
 box(14,.015,.04,edgeM,0,.2,-.14);box(14,.015,.04,edgeM,0,.4,2.16);
 const tier=z=>z>2.15?.4:z>-.15?.2:0;
 
-// ---------- 1. Video wall ----------
+// ---------- Video Wall ----------
 const WALL=[];
 function screen(draw){const c=document.createElement('canvas');c.width=512;c.height=288;const t=new T.CanvasTexture(c);WALL.push({g:c.getContext('2d'),t,draw});return t}
 const SC=['#31e981','#ffb02e','#ff4d4f'];
@@ -120,14 +120,14 @@ const beacon=new T.Group();beacon.position.set(-5.2,3.3,-4.85);scene.add(beacon)
 const sign=ctex(512,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.font='600 34px sans-serif';g.textBaseline='middle';g.textAlign='center';g.fillText('NETWORK OPERATION CENTER  24×7',w/2,h/2)});
 tplane(3.6,.45,sign,0,3.0,4.96,Math.PI);
 
-// ---------- Operator dashboards ----------
+// ---------- Operator Dashboards ----------
 const dash=[0,1,2].map(i=>{const c=document.createElement('canvas');c.width=256;c.height=144;return{c,g:c.getContext('2d'),t:new T.CanvasTexture(c),i}});
 function drawDash(d){const g=d.g;g.fillStyle='#0a1118';g.fillRect(0,0,256,144);g.fillStyle='#111c27';g.fillRect(0,0,256,14);
   if(d.i===1){for(let i=0;i<8;i++){g.fillStyle=SC[Math.random()<.12?1:0];g.fillRect(8+(i%4)*60,24+Math.floor(i/4)*50,52,42)}}
   else{g.strokeStyle=d.i?'#ffb02e':'#4fc3e8';g.lineWidth=2;g.beginPath();for(let i=0;i<32;i++){const y=110-rnd(10,80);i?g.lineTo(8+i*7.5,y):g.moveTo(8,y)}g.stroke();g.fillStyle='#8fa3b5';g.fillRect(8,126,rnd(40,200),4)}
   d.t.needsUpdate=true}
 
-// ---------- 2 & 8. Workstations, Chairs & Desks ----------
+// ---------- Workstations ----------
 const deskM=M(0xe9edf0,{roughness:.5}),legM=M(0x30363d),kbM=M(0x15181c),chairM=M(0x1c242d,{roughness:.9});
 const monG=new T.BoxGeometry(.56,.33,.025),dk=M(0x0a0c0f);
 const monMats=dash.map(d=>[dk,dk,dk,dk,new T.MeshBasicMaterial({map:d.t}),dk]);
@@ -138,12 +138,13 @@ function station(x,z,yb,k){
   const cy=(Math.random()-.5)*.5;const c=new T.Group();c.position.set(x+(Math.random()-.5)*.2,yb,z+.8);c.rotation.y=cy;scene.add(c);
   box(.46,.07,.46,chairM,0,.5,0,c);box(.44,.5,.06,chairM,0,.8,.22,c);cyl(.03,.3,legM,0,.28,0,c);cyl(.26,.03,legM,0,.05,0,c)}
 let k=0;[[-1.3,0],[1,.2],[3.3,.4]].forEach(([z,yb])=>[-5,-3.6,-2.2,2.2,3.6,5].forEach(x=>station(x,z,yb,k++)));
-// supervisor desk
+
+// Supervisor desk
 box(2,.04,.8,M(0x7a5c3e),0,.4+.74,3.9);box(.04,.72,.7,legM,-.98,.76,3.9);box(.04,.72,.7,legM,.98,.76,3.9);
 [-.6,0,.6].forEach((o,i)=>monitor(o,.4,3.72,i));box(.14,.06,.2,legM,.8,1.17,4.0);
 {const c=new T.Group();c.position.set(0,.4,4.65);scene.add(c);box(.5,.07,.5,chairM,0,.5,0,c);box(.48,.6,.06,chairM,0,.85,.24,c);cyl(.03,.3,legM,0,.28,0,c);cyl(.28,.03,legM,0,.05,0,c)}
 
-// ---------- 3. Network Racks ----------
+// ---------- Network Racks ----------
 const cache={};
 function dev(type,u){const key=type+u;if(cache[key])return cache[key];const W=600,H=50*u;
   return cache[key]=ctex(W,H,g=>{g.fillStyle={sw:'#2b313a',pp:'#1b1f27',cm:'#0c0d10',srv:'#3a3f46',odf:'#d9b82b'}[type];g.fillRect(0,0,W,H);g.fillStyle='rgba(255,255,255,.12)';g.fillRect(0,0,W,3);
@@ -163,14 +164,13 @@ const leds=new T.InstancedMesh(new T.BoxGeometry(.008,.008,.004),new T.MeshBasic
 ledPos.forEach(([g,lx,ly,lz],i)=>{dm.position.copy(g.localToWorld(new T.Vector3(lx,ly,lz)));dm.rotation.y=g.rotation.y;dm.updateMatrix();leds.setMatrixAt(i,dm.matrix);leds.setColorAt(i,cl.set(0x31e981))});scene.add(leds);
 const LC=[0x31e981,0x31e981,0x31e981,0xffb02e,0x16301f];
 
-// ---------- 4. CCTV Monitoring System ----------
+// ---------- CCTV ----------
 const cams=[];
 [[6.6,-4.6],[-6.6,-4.6],[6.6,4.6],[-6.6,4.6]].forEach(([x,z])=>{const p=new T.Group();p.position.set(x,3.3,z);p.userData.base=Math.atan2(x,z);p.rotation.y=p.userData.base;scene.add(p);
   const b=new T.Group();b.rotation.x=-.3;p.add(b);box(.12,.12,.28,M(0xf2f2f2),0,0,0,b);cyl(.045,.08,M(0x111),0,0,-.17,b,Math.PI/2,0);p.userData.led=box(.02,.02,.01,B(0xff2d2d),.04,.05,-.141,b);cams.push(p)});
 
-// ---------- 5. Communication Equipment ----------
-[[-5,0],[2.2,0],[5,.4]].forEach(([x,z])=>{
-  box(.15,.06,.12,M(0x111),x,z+1.11,z-.25);box(.12,.02,.08,M(0x222),x,z+1.13,z-.23);box(.02,.08,.02,M(0x999),x,z+1.15,z-.22);});
+// ---------- Communication ----------
+[[-5,0],[2.2,0],[5,.4]].forEach(([x,z])=>{box(.15,.06,.12,M(0x111),x,z+1.11,z-.25);box(.12,.02,.08,M(0x222),x,z+1.13,z-.23);box(.02,.08,.02,M(0x999),x,z+1.15,z-.22);});
 box(1.2,.8,.05,M(0x1c242c),-6.96,1.8,1.2);
 const commT=ctex(512,256,(g,w,h)=>{g.fillStyle='#0f1620';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.fillRect(0,0,w,30);
   g.fillStyle='#e8eef5';g.font='600 18px sans-serif';g.fillText('EMERGENCY CONTACTS',16,20);
@@ -179,7 +179,7 @@ const commT=ctex(512,256,(g,w,h)=>{g.fillStyle='#0f1620';g.fillRect(0,0,w,h);g.f
 tplane(1.0,.6,commT,-6.9,1.8,1.2,Math.PI/2);
 box(.3,.1,.2,M(0x222),.8,1.18,3.9);box(.05,.15,.02,M(0x111),.8,1.3,3.95);box(.05,.15,.02,M(0x111),.8,1.3,3.85);
 
-// ---------- 6. UPS System ----------
+// ---------- UPS ----------
 const upsM=M(0x222831,{metalness:.3,roughness:.4});
 box(.8,1.8,.8,upsM,6.45,.9,1.0);box(.6,.04,.6,M(0x333),6.45,1.7,1.0);
 box(.06,.06,.01,B(0x31e981),6.45,1.65,.65);box(.06,.06,.01,B(0xffb02e),6.45,1.55,.65);
@@ -188,7 +188,7 @@ tplane(.6,.4,upsTxt,6.45,.8,.65,Math.PI/2);
 const upLabel=ctex(256,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.font='600 24px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('UPS',w/2,h/2)});
 tplane(.8,.2,upLabel,6.8,2.1,1.0,-Math.PI/2);
 
-// ---------- 7. Air Conditioning / Cooling System ----------
+// ---------- Cooling ----------
 const acMat=M(0xf2f4f5);
 const acGrill=ctex(128,128,(g,w,h)=>{g.fillStyle='#e9edf0';g.fillRect(0,0,w,h);g.strokeStyle='#9aa4ac';g.lineWidth=4;for(let i=0;i<10;i++){g.beginPath();g.moveTo(10,10+i*12);g.lineTo(w-10,10+i*12);g.stroke()}});
 [[-3.75,-1.85],[3.75,-1.85],[-3.75,2.75],[3.75,2.75]].forEach(([x,z])=>{
@@ -203,7 +203,7 @@ cg.rotation.y=Math.PI/2;cg.position.set(-5.85,1.1,-4.4);scene.add(cg);
 const cracLabel=ctex(256,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.font='600 22px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('PRECISION COOLING',w/2,h/2)});
 tplane(1.2,.25,cracLabel,-6.1,1.8,-4.4,Math.PI/2);
 
-// ---------- 9. Fire Extinguisher ----------
+// ---------- Fire Extinguisher ----------
 const extM=M(0xd63a3a,{metalness:.4,roughness:.4});
 cyl(.08,.5,extM,-6.9,.65,2.2);
 cyl(.02,.15,M(0x111),-6.9,.95,2.2);
@@ -211,7 +211,7 @@ box(.08,.02,.15,M(0x111),-6.9,1.05,2.2);
 const extLabel=ctex(128,128,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#ff4d4f';g.font='bold 40px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('FIRE',w/2,h/2-20);g.font='bold 40px sans-serif';g.fillText('EXT',w/2,h/2+20)});
 tplane(.4,.4,extLabel,-6.85,1.1,2.2,Math.PI/2);
 
-// ---------- 10. Access Control System ----------
+// ---------- Access Control ----------
 box(.1,.16,.04,M(0x111),-6.96,1.35,3.5);
 box(.012,.012,.01,B(0x31e981),-6.94,1.41,3.5);
 box(.1,.1,.04,M(0x1b3a5c),-6.96,1.12,3.5);
@@ -219,14 +219,14 @@ box(.05,.05,.01,B(0x4fc3e8),-6.94,1.12,3.5);
 box(.08,.08,.03,M(0x222),-6.96,1.5,3.5);
 box(.04,.04,.01,B(0x31e981),-6.94,1.5,3.5);
 
-// ---------- 11. Cable Management ----------
+// ---------- Cable Management ----------
 const trayM=M(0xe8891d,{metalness:.5,roughness:.4});
 [2.8,3.0].forEach(y=>{box(.4,.04,5,trayM,6.45,y,-2.8);box(.4,.06,.02,trayM,6.45,y+.03,-.3);box(.4,.06,.02,trayM,6.45,y+.03,-5.3)});
 const cc=[0x2d7dd2,0xf2c230,0xe5484d,0x31c48d,0xff9f43];
 for(let i=0;i<5;i++){ box(.02,1.2,.02,M(cc[i]),6.45,2.2,-3.7+i*.2); }
 box(1.0,.02,4,M(0x333),5.5,.1,-2.8);
 
-// ---------- 12. Wall Clock ----------
+// ---------- Wall Clock ----------
 const wcC=document.createElement('canvas');wcC.width=wcC.height=128;
 const wcT=new T.CanvasTexture(wcC);
 tplane(.8,.8,wcT,0,2.8,-4.96);
@@ -234,16 +234,15 @@ function drawWC(){const g=wcC.getContext('2d');g.fillStyle='#10161d';g.fillRect(
   const d=new Date(),h=(d.getHours()%12+d.getMinutes()/60)/12*Math.PI*2,m=d.getMinutes()/60*Math.PI*2,s=d.getSeconds()/60*Math.PI*2;
   [[h,30,4,'#fff'],[m,45,2,'#fff'],[s,48,1,'#ff4d4f']].forEach(([a,l,w,c])=>{g.strokeStyle=c;g.lineWidth=w;g.beginPath();g.moveTo(64,64);g.lineTo(64+Math.sin(a)*l,64-Math.cos(a)*l);g.stroke()});
   wcT.needsUpdate=true;}
-drawWC();
 
-// ---------- 13. Emergency Exit ----------
+// ---------- Emergency Exit ----------
 box(.05,2.2,1.1,M(0x2c333b),6.97,.4+1.1,3.8);
 box(.06,2.1,.9,M(0x2f8f5f,{metalness:.4}),6.93,.4+1.05,3.8);
 const exitT=ctex(128,48,(g,w,h)=>{g.fillStyle='#0e7a3a';g.fillRect(0,0,w,h);g.fillStyle='#fff';g.font='600 30px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('EXIT',w/2,h/2)});
 tplane(.5,.19,exitT,6.95,.4+2.35,3.8,-Math.PI/2);
 box(.04,.05,.8,M(0xddd,{metalness:.8}),6.88,.4+1.0,3.8);
 
-// ---------- 14. Lighting System ----------
+// ---------- Lighting System ----------
 const lgtLabel=ctex(256,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.font='600 22px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('LED LIGHTING',w/2,h/2)});
 tplane(1.2,.3,lgtLabel,0,3.55,3.8,Math.PI);
 box(.1,.2,.05,M(0x222),6.9,1.4,2.0);
@@ -269,7 +268,7 @@ label('12. Wall Clock',0,3.35,-4.7,1.2);
 label('13. Emergency Exit',6.4,2.65,3.8,1.6);
 label('14. Lighting System',0,3.35,3.8,1.4);
 
-// ---------- Tour (14 Elements) ----------
+// ---------- Tour ----------
 const S=[
  {t:'1. Video Wall / Monitoring Display',d:'Displays network status in real time. Shows network traffic and server performance. Displays alerts, errors and system failures.',p:[0,2.05,2.9],l:[0,2,-4.5]},
  {t:'2. Operator Workstation',d:'Used by IT staff to monitor the network. Checks network performance. Manages network problems and alerts.',p:[0,1.65,-.4],l:[-3.6,1,-1.4]},
@@ -317,7 +316,7 @@ addEventListener('pointermove',e=>{if(!drag)return;if(auto||tw)stopTour();yaw-=(
 cv.addEventListener('wheel',e=>{camera.fov=clamp(camera.fov+e.deltaY*.03,35,90);camera.updateProjectionMatrix()},{passive:true});
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 
-// ---------- Live data ----------
+// ---------- Live Data ----------
 function tick(){
   if(Math.random()<.4){const i=Math.random()*10|0;nodeSt[i]=Math.random()<.3?(Math.random()<.6?1:2):0}
   bwA.push(clamp(bwA[63]+rnd(-8,8),15,90));bwA.shift();bwB.push(clamp(bwB[63]+rnd(-6,6),10,70));bwB.shift();
@@ -325,24 +324,41 @@ function tick(){
   if(Math.random()<.3){const i=Math.random()*12|0;siteSt[i]=Math.random()<.2?(Math.random()<.7?1:2):0}
   GV[0]=clamp(GV[0]+rnd(-4,4),8,55);GV[1]=clamp(GV[1]+rnd(-.3,.3),0,4);GV[2]=clamp(GV[2]+rnd(-2,2),1,25);
   devs.forEach(d=>d[1]=clamp(d[1]+rnd(-6,6),10,95));
-  WALL.forEach(w=>{w.draw(w.g);w.t.needsUpdate=true});dash.forEach(drawDash);clocks.forEach(drawClock);drawWC();
+  WALL.forEach(w=>{w.draw(w.g);w.t.needsUpdate=true});dash.forEach(drawDash);drawWC();
   for(let i=0;i<ledPos.length;i++)if(Math.random()<.25)leds.setColorAt(i,cl.set(LC[Math.random()*LC.length|0]));leds.instanceColor.needsUpdate=true}
 for(let i=0;i<9;i++)alerts.push(['--:--:--',Math.random()<.2?2:Math.random()<.5?1:0,AM[i]]);
 tick();setInterval(tick,600);
 
-// ---------- Loop ----------
+// ---------- Render Loop ----------
 const clock=new T.Clock();
-(function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
-  if(tw){tw.t+=dt;
-    if(tw.t<tw.dur){const k=ease(tw.t/tw.dur);pos.lerpVectors(tw.fp,tw.tp,k);yaw=tw.fy+(tw.ty-tw.fy)*k;pitch=tw.fpi+(tw.tpi-tw.fpi)*k}
-    else{pos.copy(tw.tp);const dw=tw.spin?16:8,h=tw.t-tw.dur;yaw=tw.spin?tw.ty-(h/dw)*Math.PI*2:tw.ty;pitch=tw.tpi;
-      if(h>dw){tw=null;if(auto&&idx<S.length-1)goto(idx+1);else stopTour()}}
-  }else{const f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),r=(keys.KeyD?1:0)-(keys.KeyA?1:0),tr=(keys.ArrowRight?1:0)-(keys.ArrowLeft?1:0);
-    yaw-=tr*dt*1.6;if(f||r){if(auto)stopTour();pos.x+=(-Math.sin(yaw)*f+Math.cos(yaw)*r)*2.2*dt;pos.z+=(-Math.cos(yaw)*f-Math.sin(yaw)*r)*2.2*dt}
-    pos.x=clamp(pos.x,-6.7,6.7);pos.z=clamp(pos.z,-4.4,4.6);pos.y+=(1.65+tier(pos.z)-pos.y)*Math.min(1,dt*8)}
+(function loop(){
+  requestAnimationFrame(loop);
+  const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+  if(tw){
+    tw.t+=dt;
+    if(tw.t<tw.dur){
+      const k=ease(tw.t/tw.dur);
+      pos.lerpVectors(tw.fp,tw.tp,k);yaw=tw.fy+(tw.ty-tw.fy)*k;pitch=tw.fpi+(tw.tpi-tw.fpi)*k;
+    }else{
+      pos.copy(tw.tp);
+      const dw=tw.spin?16:8,h=tw.t-tw.dur;
+      yaw=tw.spin?tw.ty-(h/dw)*Math.PI*2:tw.ty;pitch=tw.tpi;
+      if(h>dw){tw=null;if(auto&&idx<S.length-1)goto(idx+1);else stopTour()}
+    }
+  }else{
+    const f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),
+          r=(keys.KeyD?1:0)-(keys.KeyA?1:0),
+          tr=(keys.ArrowRight?1:0)-(keys.ArrowLeft?1:0);
+    yaw-=tr*dt*1.6;
+    if(f||r){if(auto)stopTour();pos.x+=(-Math.sin(yaw)*f+Math.cos(yaw)*r)*2.2*dt;pos.z+=(-Math.cos(yaw)*f-Math.sin(yaw)*r)*2.2*dt}
+    pos.x=clamp(pos.x,-6.7,6.7);pos.z=clamp(pos.z,-4.4,4.6);pos.y+=(1.65+tier(pos.z)-pos.y)*Math.min(1,dt*8);
+  }
   camera.position.copy(pos);camera.rotation.set(pitch,yaw,0);
-  const on=Math.sin(t*5)>0;cams.forEach(c=>{c.rotation.y=c.userData.base+Math.sin(t*.5)*.3;c.userData.led.visible=on});
-  beacon.rotation.y+=dt*4;renderer.render(scene,camera)})();
+  const on=Math.sin(t*5)>0;
+  cams.forEach(c=>{c.rotation.y=c.userData.base+Math.sin(t*.5)*.3;c.userData.led.visible=on});
+  beacon.rotation.y+=dt*4;
+  renderer.render(scene,camera);
+})();
 </script>
 </body>
 </html>
