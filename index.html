@@ -204,7 +204,6 @@ const cracLabel=ctex(256,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);
 tplane(1.2,.25,cracLabel,-6.1,1.8,-4.4,Math.PI/2);
 
 // ---------- 9. Fire Extinguisher ----------
-// Left wall, near entrance
 const extM=M(0xd63a3a,{metalness:.4,roughness:.4});
 cyl(.08,.5,extM,-6.9,.65,2.2);
 cyl(.02,.15,M(0x111),-6.9,.95,2.2);
@@ -213,25 +212,18 @@ const extLabel=ctex(128,128,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);
 tplane(.4,.4,extLabel,-6.85,1.1,2.2,Math.PI/2);
 
 // ---------- 10. Access Control System ----------
-// Beside entrance
 box(.1,.16,.04,M(0x111),-6.96,1.35,3.5);
 box(.012,.012,.01,B(0x31e981),-6.94,1.41,3.5);
 box(.1,.1,.04,M(0x1b3a5c),-6.96,1.12,3.5);
 box(.05,.05,.01,B(0x4fc3e8),-6.94,1.12,3.5);
-// fingerprint reader
 box(.08,.08,.03,M(0x222),-6.96,1.5,3.5);
 box(.04,.04,.01,B(0x31e981),-6.94,1.5,3.5);
 
 // ---------- 11. Cable Management ----------
-// Overhead cable trays above racks
 const trayM=M(0xe8891d,{metalness:.5,roughness:.4});
 [2.8,3.0].forEach(y=>{box(.4,.04,5,trayM,6.45,y,-2.8);box(.4,.06,.02,trayM,6.45,y+.03,-.3);box(.4,.06,.02,trayM,6.45,y+.03,-5.3)});
-// cables hanging down to racks
 const cc=[0x2d7dd2,0xf2c230,0xe5484d,0x31c48d,0xff9f43];
-for(let i=0;i<5;i++){
-  box(.02,1.2,.02,M(cc[i]),6.45,2.2,-3.7+i*.2);
-}
-// floor cable tray under raised floor (visible near the edge)
+for(let i=0;i<5;i++){ box(.02,1.2,.02,M(cc[i]),6.45,2.2,-3.7+i*.2); }
 box(1.0,.02,4,M(0x333),5.5,.1,-2.8);
 
 // ---------- 12. Wall Clock ----------
@@ -245,16 +237,13 @@ function drawWC(){const g=wcC.getContext('2d');g.fillStyle='#10161d';g.fillRect(
 drawWC();
 
 // ---------- 13. Emergency Exit ----------
-// Right wall, beside supervisor desk
 box(.05,2.2,1.1,M(0x2c333b),6.97,.4+1.1,3.8);
 box(.06,2.1,.9,M(0x2f8f5f,{metalness:.4}),6.93,.4+1.05,3.8);
 const exitT=ctex(128,48,(g,w,h)=>{g.fillStyle='#0e7a3a';g.fillRect(0,0,w,h);g.fillStyle='#fff';g.font='600 30px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('EXIT',w/2,h/2)});
 tplane(.5,.19,exitT,6.95,.4+2.35,3.8,-Math.PI/2);
-// push bar
 box(.04,.05,.8,M(0xddd,{metalness:.8}),6.88,.4+1.0,3.8);
 
 // ---------- 14. Lighting System ----------
-// Ceiling troffers are already there, let's add a label and a switch panel
 const lgtLabel=ctex(256,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.font='600 22px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('LED LIGHTING',w/2,h/2)});
 tplane(1.2,.3,lgtLabel,0,3.55,3.8,Math.PI);
 box(.1,.2,.05,M(0x222),6.9,1.4,2.0);
@@ -352,7 +341,7 @@ const clock=new T.Clock();
     yaw-=tr*dt*1.6;if(f||r){if(auto)stopTour();pos.x+=(-Math.sin(yaw)*f+Math.cos(yaw)*r)*2.2*dt;pos.z+=(-Math.cos(yaw)*f-Math.sin(yaw)*r)*2.2*dt}
     pos.x=clamp(pos.x,-6.7,6.7);pos.z=clamp(pos.z,-4.4,4.6);pos.y+=(1.65+tier(pos.z)-pos.y)*Math.min(1,dt*8)}
   camera.position.copy(pos);camera.rotation.set(pitch,yaw,0);
-  const on=Math.sin(t*5)>0;cams.forEach(c=>{c.rotation.y=c.userData.base+Math.sin(t*.5)*.3;c.userData.led.visible=on});smoke.forEach(s=>s.visible=on);
+  const on=Math.sin(t*5)>0;cams.forEach(c=>{c.rotation.y=c.userData.base+Math.sin(t*.5)*.3;c.userData.led.visible=on});
   beacon.rotation.y+=dt*4;renderer.render(scene,camera)})();
 </script>
 </body>
