@@ -53,7 +53,7 @@ $('info').innerHTML=Object.entries(STUDENT).map(([k,v])=>`<tr><td>${k}</td><td>$
 document.querySelectorAll('#intro img').forEach(i=>i.onerror=()=>i.style.display='none');
 
 const scene=new T.Scene();scene.background=new T.Color(0x0b0e12);
-const camera=new T.PerspectiveCamera(70,innerWidth/innerHeight,.05,80);camera.rotation.order='YXZ';
+const camera=new T.PerspectiveCamera(70,innerWidth/innerHeight,.05,100);camera.rotation.order='YXZ';
 const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 renderer.setSize(innerWidth,innerHeight);document.body.prepend(renderer.domElement);
 
@@ -66,26 +66,26 @@ function ctex(w,h,draw,rx=1,ry=1){const c=document.createElement('canvas');c.wid
 function tplane(w,h,tex,x,y,z,ry=0){const m=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:tex}));m.position.set(x,y,z);m.rotation.y=ry;scene.add(m);return m}
 const rnd=(a,b)=>a+Math.random()*(b-a),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
-// ---------- Room dimensions (20 m × 15 m, ceiling 4.6 m) ----------
-const ROOM={W:20,D:15,H:4.6};
-const HW=ROOM.W/2;   // 10
-const HD=ROOM.D/2;   // 7.5
-const CH=ROOM.H;     // 4.6
+// ---------- Room dimensions (24 m × 18 m, ceiling 5.2 m) ----------
+const ROOM={W:24,D:18,H:5.2};
+const HW=ROOM.W/2;   // 12
+const HD=ROOM.D/2;   // 9
+const CH=ROOM.H;     // 5.2
 
 // ---------- Lights ----------
 scene.add(new T.HemisphereLight(0xcfe0f5,0x1c2229,.6));
-[[-HW*.5,CH-1.4,-HD*.5],[HW*.5,CH-1.4,-HD*.5],[-HW*.5,CH-1.4,HD*.5],[HW*.5,CH-1.4,HD*.5]].forEach(p=>{const l=new T.PointLight(0xe6f0ff,.5,20);l.position.set(...p);scene.add(l)});
-const wl=new T.PointLight(0x4fc3e8,.8,14);wl.position.set(0,CH-1.2,-HD+1.5);scene.add(wl);
+[[-HW*.5,CH-1.6,-HD*.5],[HW*.5,CH-1.6,-HD*.5],[-HW*.5,CH-1.6,HD*.5],[HW*.5,CH-1.6,HD*.5]].forEach(p=>{const l=new T.PointLight(0xe6f0ff,.5,26);l.position.set(...p);scene.add(l)});
+const wl=new T.PointLight(0x4fc3e8,.9,18);wl.position.set(0,CH-1.4,-HD+2);scene.add(wl);
 
 // ---------- Shell ----------
-const carpet=ctex(128,128,(g,w,h)=>{g.fillStyle='#2c3846';g.fillRect(0,0,w,h);for(let i=0;i<900;i++){g.fillStyle=`rgba(${Math.random()<.5?'255,255,255':'0,0,0'},.07)`;g.fillRect(Math.random()*w,Math.random()*h,2,2)}g.strokeStyle='rgba(0,0,0,.25)';g.strokeRect(0,0,w,h)},40,30);
+const carpet=ctex(128,128,(g,w,h)=>{g.fillStyle='#2c3846';g.fillRect(0,0,w,h);for(let i=0;i<900;i++){g.fillStyle=`rgba(${Math.random()<.5?'255,255,255':'0,0,0'},.07)`;g.fillRect(Math.random()*w,Math.random()*h,2,2)}g.strokeStyle='rgba(0,0,0,.25)';g.strokeRect(0,0,w,h)},48,36);
 const floor=new T.Mesh(new T.PlaneGeometry(ROOM.W,ROOM.D),new T.MeshStandardMaterial({map:carpet,roughness:.95}));floor.rotation.x=-Math.PI/2;scene.add(floor);
 const wallM=M(0xcdd4da,{roughness:.9}),darkWall=M(0x1c242c,{roughness:.9});
 [[0,-HD,0,ROOM.W,darkWall],[0,HD,Math.PI,ROOM.W,wallM],[-HW,0,Math.PI/2,ROOM.D,wallM],[HW,0,-Math.PI/2,ROOM.D,wallM]].forEach(([x,z,r,w,m])=>{
   const p=new T.Mesh(new T.PlaneGeometry(w,CH),m);p.rotation.y=r;p.position.set(x,CH/2,z);scene.add(p)});
-const tileTex=ctex(64,64,(g,w,h)=>{g.fillStyle='#e9edf0';g.fillRect(0,0,w,h);for(let i=0;i<120;i++){g.fillStyle='rgba(0,0,0,.05)';g.fillRect(Math.random()*w,Math.random()*h,2,2)}g.strokeStyle='#9aa4ac';g.lineWidth=3;g.strokeRect(0,0,w,h)},33.3,25);
+const tileTex=ctex(64,64,(g,w,h)=>{g.fillStyle='#e9edf0';g.fillRect(0,0,w,h);for(let i=0;i<120;i++){g.fillStyle='rgba(0,0,0,.05)';g.fillRect(Math.random()*w,Math.random()*h,2,2)}g.strokeStyle='#9aa4ac';g.lineWidth=3;g.strokeRect(0,0,w,h)},40,30);
 const ceil=new T.Mesh(new T.PlaneGeometry(ROOM.W,ROOM.D),new T.MeshStandardMaterial({map:tileTex}));ceil.rotation.x=Math.PI/2;ceil.position.y=CH;scene.add(ceil);
-const troff=B(0xcfe3f5);[-7.5,-3.75,0,3.75,7.5].forEach(x=>[-5.6,-1.9,1.9,5.6].forEach(z=>box(1.6,.03,.8,troff,x,CH-.02,z)));
+const troff=B(0xcfe3f5);[-9,-4.5,0,4.5,9].forEach(x=>[-6.7,-2.2,2.2,6.7].forEach(z=>box(1.8,.03,.9,troff,x,CH-.02,z)));
 
 // raised tiers (scale)
 const platM=M(0x26313d,{roughness:.95}),edgeM=B(0x4fc3e8);
@@ -121,12 +121,12 @@ const dDev=g=>{frame(g,'Device CPU load');devs.forEach(([n,v],i)=>{const y=52+i*
 const dSla=g=>{frame(g,'Service level summary');[['99.98%','Uptime (30 d)'],[String(8+(alerts.length%9)),'Open tickets'],['22 min','Mean time to repair'],['0','Severity 1']].forEach(([v,l],i)=>{const x=20+(i%2)*245,y=48+Math.floor(i/2)*118;g.fillStyle='#142230';g.fillRect(x,y,230,105);g.fillStyle='#4fc3e8';g.font='600 40px sans-serif';g.fillText(v,x+16,y+48);g.fillStyle='#8fa3b5';g.font='14px sans-serif';g.fillText(l,x+16,y+84)})};
 const dApp=g=>{frame(g,'Traffic by application');let a=-Math.PI/2;apps.forEach(([n,p,c],i)=>{g.fillStyle=c;g.beginPath();g.moveTo(150,165);g.arc(150,165,100,a,a+p*Math.PI*2);g.fill();a+=p*Math.PI*2;g.fillRect(300,60+i*34,14,14);g.fillStyle='#e8eef5';g.font='14px sans-serif';g.fillText(n+'  '+(p*100).toFixed(0)+'%',324,72+i*34)});g.fillStyle='#0a1118';g.beginPath();g.arc(150,165,52,0,7);g.fill()};
 const wallTex=[dTopo,dBw,dAlert,dSite,dGauge,dDev,dSla,dApp].map(screen);
-box(13.2,4.1,.08,M(0x0b0f14),0,2.6,-HD+.04);
-wallTex.forEach((t,i)=>{const c=i%4,r=i<4?1:0;const m=new T.Mesh(new T.PlaneGeometry(3.1,1.74),new T.MeshBasicMaterial({map:t}));m.position.set(-4.65+c*3.1,r?3.5:1.8,-HD+.09);scene.add(m)});
-box(13.2,.03,.05,edgeM,0,.86,-HD+.1);
-const beacon=new T.Group();beacon.position.set(-7.4,CH-.4,-HD+.15);scene.add(beacon);cyl(.1,.1,M(0xffa000,{emissive:0x884400}),0,0,0,beacon);box(.02,.06,.3,B(0xffe08a),0,.04,.1,beacon);
+box(16.2,5.0,.08,M(0x0b0f14),0,3.1,-HD+.04);
+wallTex.forEach((t,i)=>{const c=i%4,r=i<4?1:0;const m=new T.Mesh(new T.PlaneGeometry(3.9,2.2),new T.MeshBasicMaterial({map:t}));m.position.set(-5.85+c*3.9,r?4.2:2.05,-HD+.09);scene.add(m)});
+box(16.2,.03,.05,edgeM,0,1.0,-HD+.1);
+const beacon=new T.Group();beacon.position.set(-9.0,CH-.5,-HD+.15);scene.add(beacon);cyl(.1,.1,M(0xffa000,{emissive:0x884400}),0,0,0,beacon);box(.02,.06,.3,B(0xffe08a),0,.04,.1,beacon);
 const sign=ctex(512,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.font='600 34px sans-serif';g.textBaseline='middle';g.textAlign='center';g.fillText('NETWORK OPERATION CENTER  24×7',w/2,h/2)});
-tplane(5.2,.65,sign,0,CH-.6,HD-.04,Math.PI);
+tplane(6.4,.8,sign,0,CH-.8,HD-.04,Math.PI);
 
 // ---------- Operator Dashboards ----------
 const dash=[0,1,2].map(i=>{const c=document.createElement('canvas');c.width=256;c.height=144;return{c,g:c.getContext('2d'),t:new T.CanvasTexture(c),i}});
@@ -147,12 +147,12 @@ function station(x,z,yb,k){
   box(.46,.07,.46,chairM,0,.5,0,c);box(.44,.5,.06,chairM,0,.8,.22,c);cyl(.03,.3,legM,0,.28,0,c);cyl(.26,.03,legM,0,.05,0,c)}
 let k=0;
 // operator rows: scale to new size
-[[-1.9,0],[1.4,.2],[4.7,.4]].forEach(([z,yb])=>[-7.5,-5.4,-3.3,3.3,5.4,7.5].forEach(x=>station(x,z,yb,k++)));
+[[-2.3,0],[1.7,.2],[5.6,.4]].forEach(([z,yb])=>[-9,-6.5,-4,4,6.5,9].forEach(x=>station(x,z,yb,k++)));
 
 // Supervisor desk (scale)
-box(2.8,.04,1.1,M(0x7a5c3e),0,.4+.74,5.85);box(.04,.72,.9,legM,-1.38,.76,5.85);box(.04,.72,.9,legM,1.38,.76,5.85);
-[-.84,0,.84].forEach((o,i)=>monitor(o,.4,5.62,i));box(.14,.06,.2,legM,1.12,1.17,6.0);
-{const c=new T.Group();c.position.set(0,.4,6.98);scene.add(c);box(.5,.07,.5,chairM,0,.5,0,c);box(.48,.6,.06,chairM,0,.85,.24,c);cyl(.03,.3,legM,0,.28,0,c);cyl(.28,.03,legM,0,.05,0,c)}
+box(3.4,.04,1.3,M(0x7a5c3e),0,.4+.74,7.0);box(.04,.72,1.0,legM,-1.68,.76,7.0);box(.04,.72,1.0,legM,1.68,.76,7.0);
+[-1.0,0,1.0].forEach((o,i)=>monitor(o,.4,6.72,i));box(.14,.06,.2,legM,1.36,1.17,7.2);
+{const c=new T.Group();c.position.set(0,.4,8.4);scene.add(c);box(.5,.07,.5,chairM,0,.5,0,c);box(.48,.6,.06,chairM,0,.85,.24,c);cyl(.03,.3,legM,0,.28,0,c);cyl(.28,.03,legM,0,.05,0,c)}
 
 // ---------- Network Racks ----------
 const cache={};
@@ -169,7 +169,7 @@ function rack(x,z,rot){const g=new T.Group();g.position.set(x,0,z);g.rotation.y=
     const o=new T.Mesh(new T.BoxGeometry(.54,h-.002,.02),[dk,dk,dk,dk,fm,dk]);o.position.set(0,y+h/2,.51);g.add(o);
     if(t==='sw')for(let r=0;r<2;r++)for(let c=0;c<12;c++)ledPos.push([g,-.25+c*.0125,y+h/2+(r?-.007:.012),.523]);y+=h}}
 // rack row nearer the corner of the bigger room
-rack(9.25,-5.9,-Math.PI/2);rack(9.25,-5.25,-Math.PI/2);rack(9.25,-4.6,-Math.PI/2);
+rack(11.25,-7.2,-Math.PI/2);rack(11.25,-6.55,-Math.PI/2);rack(11.25,-5.9,-Math.PI/2);rack(11.25,-5.25,-Math.PI/2);
 scene.updateMatrixWorld(true);
 const leds=new T.InstancedMesh(new T.BoxGeometry(.008,.008,.004),new T.MeshBasicMaterial({color:0xffffff}),ledPos.length),dm=new T.Object3D(),cl=new T.Color();
 ledPos.forEach(([g,lx,ly,lz],i)=>{dm.position.copy(g.localToWorld(new T.Vector3(lx,ly,lz)));dm.rotation.y=g.rotation.y;dm.updateMatrix();leds.setMatrixAt(i,dm.matrix);leds.setColorAt(i,cl.set(0x31e981))});scene.add(leds);
@@ -181,121 +181,242 @@ const cams=[];
   const b=new T.Group();b.rotation.x=-.3;p.add(b);box(.12,.12,.28,M(0xf2f2f2),0,0,0,b);cyl(.045,.08,M(0x111),0,0,-.17,b,Math.PI/2,0);p.userData.led=box(.02,.02,.01,B(0xff2d2d),.04,.05,-.141,b);cams.push(p)});
 
 // ---------- Communication ----------
-[[-6.8,0],[2.6,0],[6.5,.6]].forEach(([x,z])=>{box(.15,.06,.12,M(0x111),x,z+1.11,z-.25);box(.12,.02,.08,M(0x222),x,z+1.13,z-.23);box(.02,.08,.02,M(0x999),x,z+1.15,z-.22);});
-box(1.8,1.2,.05,M(0x1c242c),-HW+.04,2.1,1.8);
+[[-8.2,0],[3.0,0],[7.5,.6]].forEach(([x,z])=>{box(.15,.06,.12,M(0x111),x,z+1.11,z-.25);box(.12,.02,.08,M(0x222),x,z+1.13,z-.23);box(.02,.08,.02,M(0x999),x,z+1.15,z-.22);});
+box(2.2,1.5,.05,M(0x1c242c),-HW+.04,2.4,2.2);
 const commT=ctex(512,256,(g,w,h)=>{g.fillStyle='#0f1620';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.fillRect(0,0,w,30);
   g.fillStyle='#e8eef5';g.font='600 18px sans-serif';g.fillText('EMERGENCY CONTACTS',16,20);
   const contacts=[['Network Team','ext. 1201','#31e981'],['Security','ext. 1000','#ffb02e'],['Fire Dept','999','#ff4d4f'],['Management','ext. 2000','#4fc3e8'],['ISP NOC','+603-XXXX','#b388ff']];
   contacts.forEach(([n,e,c],i)=>{const y=50+i*40;g.fillStyle=c;g.beginPath();g.arc(24,y,6,0,7);g.fill();g.fillStyle='#e8eef5';g.font='14px sans-serif';g.fillText(n,40,y+5);g.fillStyle='#8fa3b5';g.fillText(e,400,y+5)})});
-tplane(1.5,.9,commT,-HW+.06,2.1,1.8,Math.PI/2);
-box(.3,.1,.2,M(0x222),1.2,1.18,5.85);box(.05,.15,.02,M(0x111),1.2,1.3,5.9);box(.05,.15,.02,M(0x111),1.2,1.3,5.8);
+tplane(1.8,1.1,commT,-HW+.06,2.4,2.2,Math.PI/2);
+box(.3,.1,.2,M(0x222),1.4,1.18,7.0);box(.05,.15,.02,M(0x111),1.4,1.3,7.05);box(.05,.15,.02,M(0x111),1.4,1.3,6.95);
 
 // ---------- UPS ----------
 const upsM=M(0x222831,{metalness:.3,roughness:.4});
-box(1.0,2.4,1.0,upsM,9.25,1.2,1.4);box(.8,.05,.8,M(0x333),9.25,2.3,1.4);
-box(.06,.06,.01,B(0x31e981),9.25,2.2,1.15);box(.06,.06,.01,B(0xffb02e),9.25,2.08,1.15);
+box(1.2,2.9,1.2,upsM,11.25,1.45,1.7);box(1.0,.06,1.0,M(0x333),11.25,2.85,1.7);
+box(.06,.06,.01,B(0x31e981),11.25,2.65,1.4);box(.06,.06,.01,B(0xffb02e),11.25,2.52,1.4);
 const upsTxt=ctex(128,128,(g,w,h)=>{g.fillStyle='#111';g.fillRect(0,0,w,h);g.fillStyle='#31e981';g.font='16px monospace';g.fillText('LOAD: 45%',16,40);g.fillText('BATT: 100%',16,70);g.fillText('STATUS: ON',16,100)});
-tplane(.8,.5,upsTxt,9.25,1.1,1.15,Math.PI/2);
+tplane(.9,.6,upsTxt,11.25,1.3,1.4,Math.PI/2);
 const upLabel=ctex(256,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.font='600 24px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('UPS',w/2,h/2)});
-tplane(1.0,.25,upLabel,9.7,2.6,1.4,-Math.PI/2);
+tplane(1.2,.3,upLabel,11.8,3.1,1.7,-Math.PI/2);
 
 // ---------- Cooling ----------
 const acMat=M(0xf2f4f5);
 const acGrill=ctex(128,128,(g,w,h)=>{g.fillStyle='#e9edf0';g.fillRect(0,0,w,h);g.strokeStyle='#9aa4ac';g.lineWidth=4;for(let i=0;i<10;i++){g.beginPath();g.moveTo(10,10+i*12);g.lineTo(w-10,10+i*12);g.stroke()}});
-[[-5.3,-2.8],[5.3,-2.8],[-5.3,4.0],[5.3,4.0]].forEach(([x,z])=>{
-  box(1.2,.2,1.2,acMat,x,CH-.15,z);
-  const gr=new T.Mesh(new T.PlaneGeometry(1.0,1.0),new T.MeshBasicMaterial({map:acGrill}));
-  gr.rotation.x=Math.PI/2;gr.position.set(x,CH-.25,z);scene.add(gr);});
+[[-6.4,-3.4],[6.4,-3.4],[-6.4,4.8],[6.4,4.8]].forEach(([x,z])=>{
+  box(1.4,.22,1.4,acMat,x,CH-.16,z);
+  const gr=new T.Mesh(new T.PlaneGeometry(1.2,1.2),new T.MeshBasicMaterial({map:acGrill}));
+  gr.rotation.x=Math.PI/2;gr.position.set(x,CH-.28,z);scene.add(gr);});
 const cracM=M(0xd7dde3,{roughness:.5});
 const cracGrill=ctex(128,256,(g,w,h)=>{g.fillStyle='#e9edf0';g.fillRect(0,0,w,h);g.fillStyle='#9aa4ac';for(let i=0;i<18;i++){g.fillRect(10,10+i*13,w-20,8)}});
-box(1.7,3.0,1.4,cracM,-9.1,1.5,-6.5);
-const cg=new T.Mesh(new T.PlaneGeometry(1.4,2.8),new T.MeshBasicMaterial({map:cracGrill}));
-cg.rotation.y=Math.PI/2;cg.position.set(-8.25,1.5,-6.5);scene.add(cg);
+box(2.0,3.4,1.6,cracM,-11.0,1.7,-7.6);
+const cg=new T.Mesh(new T.PlaneGeometry(1.6,3.2),new T.MeshBasicMaterial({map:cracGrill}));
+cg.rotation.y=Math.PI/2;cg.position.set(-10.0,1.7,-7.6);scene.add(cg);
 const cracLabel=ctex(256,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.font='600 22px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('PRECISION COOLING',w/2,h/2)});
-tplane(1.7,.35,cracLabel,-8.7,2.6,-6.5,Math.PI/2);
+tplane(2.0,.4,cracLabel,-10.5,3.0,-7.6,Math.PI/2);
 
 // ---------- Fire Extinguisher ----------
 const extM=M(0xd63a3a,{metalness:.4,roughness:.4});
-cyl(.1,.7,extM,-9.75,.9,3.2);
-cyl(.025,.2,M(0x111),-9.75,1.3,3.2);
-box(.1,.025,.2,M(0x111),-9.75,1.45,3.2);
+cyl(.12,.85,extM,-11.7,1.1,3.8);
+cyl(.03,.25,M(0x111),-11.7,1.6,3.8);
+box(.12,.03,.24,M(0x111),-11.7,1.75,3.8);
 const extLabel=ctex(128,128,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#ff4d4f';g.font='bold 40px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('FIRE',w/2,h/2-20);g.font='bold 40px sans-serif';g.fillText('EXT',w/2,h/2+20)});
-tplane(.55,.55,extLabel,-9.7,1.5,3.2,Math.PI/2);
+tplane(.65,.65,extLabel,-11.6,1.8,3.8,Math.PI/2);
 
 // ---------- Access Control ----------
-box(.12,.2,.05,M(0x111),-HW+.04,1.7,5.0);
-box(.015,.015,.012,B(0x31e981),-HW+.06,1.77,5.0);
-box(.12,.12,.05,M(0x1b3a5c),-HW+.04,1.4,5.0);
-box(.06,.06,.012,B(0x4fc3e8),-HW+.06,1.4,5.0);
-box(.1,.1,.04,M(0x222),-HW+.04,1.88,5.0);
-box(.05,.05,.012,B(0x31e981),-HW+.06,1.88,5.0);
+box(.12,.22,.05,M(0x111),-HW+.04,2.0,6.0);
+box(.015,.015,.012,B(0x31e981),-HW+.06,2.07,6.0);
+box(.12,.12,.05,M(0x1b3a5c),-HW+.04,1.7,6.0);
+box(.06,.06,.012,B(0x4fc3e8),-HW+.06,1.7,6.0);
+box(.1,.1,.04,M(0x222),-HW+.04,2.2,6.0);
+box(.05,.05,.012,B(0x31e981),-HW+.06,2.2,6.0);
 
 // ---------- Cable Management ----------
 const trayM=M(0xe8891d,{metalness:.5,roughness:.4});
-[3.6,3.85].forEach(y=>{box(.5,.05,7,trayM,9.25,y,-4.0);box(.5,.07,.025,trayM,9.25,y+.04,-.5);box(.5,.07,.025,trayM,9.25,y+.04,-7.5)});
+[4.1,4.4].forEach(y=>{box(.5,.05,8.5,trayM,11.25,y,-4.8);box(.5,.07,.025,trayM,11.25,y+.04,-.55);box(.5,.07,.025,trayM,11.25,y+.04,-9.0)});
 const cc=[0x2d7dd2,0xf2c230,0xe5484d,0x31c48d,0xff9f43];
-for(let i=0;i<5;i++){ box(.025,1.6,.025,M(cc[i]),9.25,2.8,-5.9+i*.25); }
-box(1.4,.025,5.6,M(0x333),8.0,.1,-4.0);
+for(let i=0;i<5;i++){ box(.025,1.9,.025,M(cc[i]),11.25,3.2,-7.2+i*.3); }
+box(1.6,.025,6.8,M(0x333),9.5,.1,-4.8);
 
 // ---------- Wall Clock ----------
 const wcC=document.createElement('canvas');wcC.width=wcC.height=128;
 const wcT=new T.CanvasTexture(wcC);
-tplane(1.0,1.0,wcT,0,CH-.7,-HD+.04);
+tplane(1.2,1.2,wcT,0,CH-.9,-HD+.04);
 function drawWC(){const g=wcC.getContext('2d');g.fillStyle='#10161d';g.fillRect(0,0,128,128);g.strokeStyle='#4fc3e8';g.lineWidth=4;g.beginPath();g.arc(64,64,50,0,7);g.stroke();
   const d=new Date(),h=(d.getHours()%12+d.getMinutes()/60)/12*Math.PI*2,m=d.getMinutes()/60*Math.PI*2,s=d.getSeconds()/60*Math.PI*2;
   [[h,30,4,'#fff'],[m,45,2,'#fff'],[s,48,1,'#ff4d4f']].forEach(([a,l,w,c])=>{g.strokeStyle=c;g.lineWidth=w;g.beginPath();g.moveTo(64,64);g.lineTo(64+Math.sin(a)*l,64-Math.cos(a)*l);g.stroke()});
   wcT.needsUpdate=true;}
 
 // ---------- Emergency Exit ----------
-box(.06,2.6,1.4,M(0x2c333b),HW-.03,.4+1.3,5.5);
-box(.07,2.5,1.2,M(0x2f8f5f,{metalness:.4}),HW-.07,.4+1.25,5.5);
+box(.06,3.0,1.6,M(0x2c333b),HW-.03,.4+1.5,6.5);
+box(.07,2.9,1.4,M(0x2f8f5f,{metalness:.4}),HW-.07,.4+1.45,6.5);
 const exitT=ctex(128,48,(g,w,h)=>{g.fillStyle='#0e7a3a';g.fillRect(0,0,w,h);g.fillStyle='#fff';g.font='600 30px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('EXIT',w/2,h/2)});
-tplane(.7,.26,exitT,HW-.09,.4+2.8,5.5,-Math.PI/2);
-box(.04,.05,1.0,M(0xddd,{metalness:.8}),HW-.12,.4+1.2,5.5);
+tplane(.8,.3,exitT,HW-.09,.4+3.2,6.5,-Math.PI/2);
+box(.04,.05,1.2,M(0xddd,{metalness:.8}),HW-.12,.4+1.4,6.5);
 
 // ---------- Lighting System ----------
 const lgtLabel=ctex(256,64,(g,w,h)=>{g.fillStyle='#0b1218';g.fillRect(0,0,w,h);g.fillStyle='#4fc3e8';g.font='600 22px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('LED LIGHTING',w/2,h/2)});
-tplane(1.6,.4,lgtLabel,0,CH-.25,5.5,Math.PI);
-box(.12,.24,.06,M(0x222),HW-.06,1.7,2.8);
-box(.07,.05,.012,B(0x31e981),HW-.09,1.76,2.8);
+tplane(1.8,.45,lgtLabel,0,CH-.3,6.5,Math.PI);
+box(.12,.24,.06,M(0x222),HW-.06,2.0,3.4);
+box(.07,.05,.012,B(0x31e981),HW-.09,2.06,3.4);
+
+// ============================================================
+//  ROBOTS  (3 humanoid robots walking around)
+// ============================================================
+const robots=[];
+function makeRobot(color,eyeColor){
+  const g=new T.Group();
+  const bodyM=M(color,{metalness:.7,roughness:.25});
+  const darkM=M(0x15181c,{metalness:.8,roughness:.3});
+  const glow=B(eyeColor);
+  // torso
+  box(.42,.55,.28,bodyM,0,1.15,0,g);
+  // chest core
+  box(.16,.16,.02,glow,0,1.22,-.15,g);
+  box(.28,.08,.02,M(0x333),0,1.0,-.15,g);
+  // head
+  const head=new T.Group();head.position.set(0,1.62,0);g.add(head);
+  box(.34,.3,.3,bodyM,0,0,0,head);
+  // visor
+  box(.28,.1,.02,glow,0,.02,-.16,head);
+  // antenna
+  cyl(.015,.14,darkM,0,.22,0,head);
+  box(.05,.05,.05,glow,0,.3,0,head);
+  // arms (pivot groups)
+  const armL=new T.Group();armL.position.set(-.26,1.32,0);g.add(armL);
+  box(.1,.42,.12,bodyM,0,-.2,0,armL);
+  box(.1,.1,.1,darkM,0,-.44,0,armL);
+  const armR=new T.Group();armR.position.set(.26,1.32,0);g.add(armR);
+  box(.1,.42,.12,bodyM,0,-.2,0,armR);
+  box(.1,.1,.1,darkM,0,-.44,0,armR);
+  // legs (pivot groups)
+  const legL=new T.Group();legL.position.set(-.12,.88,0);g.add(legL);
+  box(.13,.42,.15,darkM,0,-.21,0,legL);
+  box(.14,.1,.22,darkM,0,-.44,-.03,legL);
+  const legR=new T.Group();legR.position.set(.12,.88,0);g.add(legR);
+  box(.13,.42,.15,darkM,0,-.21,0,legR);
+  box(.14,.1,.22,darkM,0,-.44,-.03,legR);
+  // wheel base (rolling)
+  cyl(.12,.06,darkM,-.12,.05,0,g,0,Math.PI/2);
+  cyl(.12,.06,darkM,.12,.05,0,g,0,Math.PI/2);
+  g.userData={armL,armR,legL,legR,eyeColor,glow,phase:Math.random()*10};
+  scene.add(g);robots.push(g);return g;
+}
+// 3 robots patrolling
+const robotPaths=[
+  {r:makeRobot(0x2d7dd2,0x31e981),pts:[[-7,3],[-7,0],[-3,0],[-3,3]],i:0,speed:1.2},
+  {r:makeRobot(0xe8891d,0xffb02e),pts:[[6,-3],[6,1],[9,1],[9,-3]],i:0,speed:1.0},
+  {r:makeRobot(0xd63a3a,0xff4d4f),pts:[[0,-4],[4,-4],[4,-1],[0,-1]],i:0,speed:0.9}
+];
+
+// ============================================================
+//  PEOPLE  (operators – 3 seated, 1 standing)
+// ============================================================
+const people=[];
+const skinTones=[0xf2c9a0,0xc68863,0x8d5524,0xe0ac69];
+const shirtColors=[0x2d7dd2,0x31c48d,0xe5484d,0x7a5c3e,0x4a4a4a];
+function makePerson(skin,shirt,seated){
+  const g=new T.Group();
+  const skinM=M(skin,{roughness:.8});
+  const shirtM=M(shirt,{roughness:.85});
+  const pantsM=M(0x1c2530,{roughness:.85});
+  const hairM=M(0x1a1a1a,{roughness:.9});
+  // torso
+  box(.38,.52,.22,shirtM,0,1.15,0,g);
+  // neck
+  cyl(.06,.08,skinM,0,1.46,0,g);
+  // head
+  const head=new T.Group();head.position.set(0,1.62,0);g.add(head);
+  box(.26,.3,.24,skinM,0,0,0,head);
+  // hair
+  box(.28,.1,.26,hairM,0,.14,0,head);
+  box(.28,.12,.04,hairM,0,.08,.11,head);
+  // eyes
+  box(.04,.03,.01,B(0x111),-.06,.02,-.125,head);
+  box(.04,.03,.01,B(0x111),.06,.02,-.125,head);
+  // arms
+  const armL=new T.Group();armL.position.set(-.24,1.36,0);g.add(armL);
+  box(.1,.4,.12,shirtM,0,-.18,0,armL);
+  box(.09,.1,.09,skinM,0,-.42,0,armL);
+  const armR=new T.Group();armR.position.set(.24,1.36,0);g.add(armR);
+  box(.1,.4,.12,shirtM,0,-.18,0,armR);
+  box(.09,.1,.09,skinM,0,-.42,0,armR);
+  // legs
+  if(seated){
+    // seated legs: thighs forward, shins down
+    box(.14,.16,.42,pantsM,-.1,.65,-.15,g);
+    box(.14,.16,.42,pantsM,.1,.65,-.15,g);
+    box(.14,.42,.14,pantsM,-.1,.35,-.36,g);
+    box(.14,.42,.14,pantsM,.1,.35,-.36,g);
+    // shoes
+    box(.16,.08,.22,M(0x111),-.1,.12,-.42,g);
+    box(.16,.08,.22,M(0x111),.1,.12,-.42,g);
+    // seated arms angled forward
+    armL.rotation.x=-1.1;armR.rotation.x=-1.1;
+    armL.position.y=1.15;armR.position.y=1.15;
+  }else{
+    const legL=new T.Group();legL.position.set(-.1,.88,0);g.add(legL);
+    box(.14,.4,.15,pantsM,0,-.2,0,legL);
+    box(.14,.4,.15,pantsM,0,-.6,0,legL);
+    box(.16,.08,.22,M(0x111),0,-.8,-.03,legL);
+    const legR=new T.Group();legR.position.set(.1,.88,0);g.add(legR);
+    box(.14,.4,.15,pantsM,0,-.2,0,legR);
+    box(.14,.4,.15,pantsM,0,-.6,0,legR);
+    box(.16,.08,.22,M(0x111),0,-.8,-.03,legR);
+    g.userData.legL=legL;g.userData.legR=legR;
+  }
+  g.userData={armL,armR,head,seated,phase:Math.random()*10};
+  scene.add(g);people.push(g);return g;
+}
+// 3 seated operators (at different stations)
+makePerson(skinTones[0],shirtColors[0],true).position.set(-6.5,tier(-2.3),-2.3+.8);
+makePerson(skinTones[1],shirtColors[1],true).position.set(0,tier(-2.3),-2.3+.8);
+makePerson(skinTones[2],shirtColors[2],true).position.set(6.5,tier(-2.3),-2.3+.8);
+// 1 standing supervisor near supervisor desk
+const standing=makePerson(skinTones[3],shirtColors[3],false);
+standing.position.set(2.2,0,5.5);
+standing.rotation.y=Math.PI;
 
 // ---------- Labels ----------
 const labels=[];
 function label(txt,x,y,z,w=1.8){const c=document.createElement('canvas');c.width=512;c.height=96;const g=c.getContext('2d');
   g.fillStyle='rgba(11,16,22,.85)';g.fillRect(0,0,512,96);g.fillStyle='#4fc3e8';g.fillRect(0,0,8,96);g.fillStyle='#fff';g.font='600 32px sans-serif';g.textBaseline='middle';g.fillText(txt,24,48,470);
   const s=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),depthTest:false}));s.scale.set(w,w*96/512,1);s.position.set(x,y,z);s.renderOrder=9;scene.add(s);labels.push(s)}
-label('1. Video Wall / Monitoring Display',0,CH-.5,-HD+.5,3.0);
-label('2. Operator Workstation',-5.0,2.2,-1.9,2.2);
-label('3. Network Rack (Router & Switch)',8.7,2.9,-5.25,2.4);
-label('4. CCTV System',8.8,CH-.9,-6.5,1.2);
-label('5. Communication Equipment',-8.6,3.0,1.8,2.4);
-label('6. UPS System',8.9,3.0,1.4,1.6);
-label('7. Air Conditioning / Cooling',-8.8,3.6,-6.5,2.4);
-label('8. Operator Chairs & Desks',-5.0,2.6,1.4,2.2);
-label('9. Fire Extinguisher',-9.3,2.0,3.2,1.8);
-label('10. Access Control System',-9.3,2.4,5.0,2.2);
-label('11. Cable Management',8.7,3.6,-4.0,2.2);
-label('12. Wall Clock',0,CH-.5,-HD+.5,1.6);
-label('13. Emergency Exit',8.8,3.1,5.5,2.0);
-label('14. Lighting System',0,CH-.4,5.5,1.8);
+label('1. Video Wall / Monitoring Display',0,CH-.6,-HD+.6,3.4);
+label('2. Operator Workstation',-6.5,2.6,-2.3,2.4);
+label('3. Network Rack (Router & Switch)',10.6,3.4,-6.55,2.6);
+label('4. CCTV System',10.6,CH-1.0,-8.0,1.2);
+label('5. Communication Equipment',-10.6,3.4,2.2,2.6);
+label('6. UPS System',10.6,3.6,1.7,1.6);
+label('7. Air Conditioning / Cooling',-10.6,4.1,-7.6,2.6);
+label('8. Operator Chairs & Desks',-6.5,3.0,1.7,2.4);
+label('9. Fire Extinguisher',-11.2,2.4,3.8,1.8);
+label('10. Access Control System',-11.2,2.8,6.0,2.2);
+label('11. Cable Management',10.6,4.2,-4.8,2.2);
+label('12. Wall Clock',0,CH-.6,-HD+.6,1.6);
+label('13. Emergency Exit',10.6,3.6,6.5,2.0);
+label('14. Lighting System',0,CH-.5,6.5,1.8);
+label('15. Robots',0,2.2,-2.0,1.4);
+label('16. Staff / Operators',2.2,2.0,5.5,1.6);
 
 // ---------- Tour (scaled positions) ----------
 const S=[
- {t:'1. Video Wall / Monitoring Display',d:'Displays network status in real time. Shows network traffic and server performance. Displays alerts, errors and system failures.',p:[0,2.3,4.2],l:[0,2.4,-HD+1]},
- {t:'2. Operator Workstation',d:'Used by IT staff to monitor the network. Checks network performance. Manages network problems and alerts.',p:[0,1.8,-1.0],l:[-5.0,1.2,-1.9]},
- {t:'3. Network Rack (Router and Switch)',d:'Connects different network devices. Manages data communication. Directs network traffic between devices.',p:[5.2,1.8,-4.0],l:[9.25,1.6,-5.25]},
- {t:'4. CCTV Monitoring System',d:'Monitors the physical security of the data center. Detects suspicious activities. Helps security staff monitor the premises.',p:[-1.4,1.8,-1.0],l:[HW-.6,CH-.6,-HD+.6]},
- {t:'5. Communication Equipment',d:'Allows IT staff to communicate with other teams. Used during network incidents. Supports emergency communication.',p:[-6.4,1.8,1.8],l:[-HW+.2,2.1,1.8]},
- {t:'6. UPS (Uninterruptible Power Supply)',d:'Provides temporary backup power. Protects equipment during power interruptions. Prevents sudden shutdowns.',p:[6.4,1.8,1.4],l:[9.25,1.2,1.4]},
- {t:'7. Air Conditioning / Cooling System',d:'Maintains a comfortable room temperature. Prevents monitoring equipment from overheating.',p:[-6.4,2.1,-6.0],l:[-9.1,1.5,-6.5]},
- {t:'8. Operator Chairs and Work Desks',d:'Provides a comfortable working environment. Supports staff who monitor the network for long periods.',p:[0,2.3,4.2],l:[-5.0,1.5,1.4]},
- {t:'9. Fire Extinguisher',d:'To control small fires and improve safety.',p:[-6.4,1.8,3.2],l:[-9.75,.9,3.2]},
- {t:'10. Access Control System',d:'Restricts unauthorized people from entering the room.',p:[-6.4,1.8,5.0],l:[-HW+.1,1.7,5.0]},
- {t:'11. Cable Management',d:'Organizes network cables and prevents tangled wires.',p:[5.2,1.8,-4.0],l:[9.25,3.6,-4.0]},
- {t:'12. Wall Clock',d:'Helps staff monitor time and manage shifts.',p:[0,3.2,-4.5],l:[0,CH-.7,-HD+.1]},
- {t:'13. Emergency Exit',d:'Provides a safe exit during emergencies.',p:[6.4,1.8,5.5],l:[HW-.1,2.0,5.5]},
- {t:'14. Lighting System',d:'Provides sufficient lighting for staff.',p:[0,1.8,2.4],l:[0,CH-.3,0]},
- {t:'360° View',d:'Full rotation of the NOC: video wall, operator rows, cabinets and safety systems.',p:[0,1.8,-1.0],l:[0,2.4,-HD],spin:1}
+ {t:'1. Video Wall / Monitoring Display',d:'Displays network status in real time. Shows network traffic and server performance. Displays alerts, errors and system failures.',p:[0,2.6,5.0],l:[0,2.8,-HD+1]},
+ {t:'2. Operator Workstation',d:'Used by IT staff to monitor the network. Checks network performance. Manages network problems and alerts.',p:[0,2.0,-1.2],l:[-6.5,1.3,-2.3]},
+ {t:'3. Network Rack (Router and Switch)',d:'Connects different network devices. Manages data communication. Directs network traffic between devices.',p:[6.5,2.0,-5.0],l:[11.25,1.8,-6.55]},
+ {t:'4. CCTV Monitoring System',d:'Monitors the physical security of the data center. Detects suspicious activities. Helps security staff monitor the premises.',p:[-1.8,2.0,-1.2],l:[HW-.6,CH-.6,-HD+.6]},
+ {t:'5. Communication Equipment',d:'Allows IT staff to communicate with other teams. Used during network incidents. Supports emergency communication.',p:[-8.0,2.0,2.2],l:[-HW+.2,2.4,2.2]},
+ {t:'6. UPS (Uninterruptible Power Supply)',d:'Provides temporary backup power. Protects equipment during power interruptions. Prevents sudden shutdowns.',p:[8.0,2.0,1.7],l:[11.25,1.5,1.7]},
+ {t:'7. Air Conditioning / Cooling System',d:'Maintains a comfortable room temperature. Prevents monitoring equipment from overheating.',p:[-8.0,2.3,-7.0],l:[-11.0,1.7,-7.6]},
+ {t:'8. Operator Chairs and Work Desks',d:'Provides a comfortable working environment. Supports staff who monitor the network for long periods.',p:[0,2.6,5.0],l:[-6.5,1.6,1.7]},
+ {t:'9. Fire Extinguisher',d:'To control small fires and improve safety.',p:[-8.0,2.0,3.8],l:[-11.7,1.1,3.8]},
+ {t:'10. Access Control System',d:'Restricts unauthorized people from entering the room.',p:[-8.0,2.0,6.0],l:[-HW+.1,2.0,6.0]},
+ {t:'11. Cable Management',d:'Organizes network cables and prevents tangled wires.',p:[6.5,2.0,-5.0],l:[11.25,4.2,-4.8]},
+ {t:'12. Wall Clock',d:'Helps staff monitor time and manage shifts.',p:[0,3.6,-5.5],l:[0,CH-.9,-HD+.1]},
+ {t:'13. Emergency Exit',d:'Provides a safe exit during emergencies.',p:[8.0,2.0,6.5],l:[HW-.1,2.4,6.5]},
+ {t:'14. Lighting System',d:'Provides sufficient lighting for staff.',p:[0,2.0,3.0],l:[0,CH-.4,0]},
+ {t:'15. Robots',d:'Autonomous patrol robots moving through the NOC. They carry sensors and cameras, and continuously monitor the room for anomalies, temperature changes and security issues.',p:[0,2.0,-1.5],l:[0,1.2,0],spin:0},
+ {t:'16. Staff / Operators',d:'Human operators seated at workstations and a standing supervisor. They monitor the video wall, respond to alerts, and coordinate network incidents.',p:[2.2,2.0,3.8],l:[2.2,1.3,5.5],spin:0},
+ {t:'360° View',d:'Full rotation of the NOC: video wall, operator rows, robots, cabinets and safety systems.',p:[0,2.0,-1.2],l:[0,2.8,-HD],spin:1}
 ];
 let yaw=0,pitch=0;const pos=new T.Vector3();
 const look=(p,l)=>{const dx=l[0]-p[0],dy=l[1]-p[1],dz=l[2]-p[2];return{yaw:Math.atan2(-dx,-dz),pitch:Math.atan2(dy,Math.hypot(dx,dz))}};
@@ -340,11 +461,69 @@ function tick(){
 for(let i=0;i<9;i++)alerts.push(['--:--:--',Math.random()<.2?2:Math.random()<.5?1:0,AM[i]]);
 tick();setInterval(tick,600);
 
+// ---------- Robot movement helpers ----------
+function moveRobot(rp,dt,t){
+  const {r,pts,speed}=rp;
+  const [tx,tz]=pts[rp.i];
+  const dx=tx-r.position.x, dz=tz-r.position.z;
+  const dist=Math.hypot(dx,dz);
+  if(dist<.15){
+    rp.i=(rp.i+1)%pts.length;
+    return;
+  }
+  const nx=dx/dist, nz=dz/dist;
+  r.position.x+=nx*speed*dt;
+  r.position.z+=nz*speed*dt;
+  r.position.y=0;
+  // face direction of travel
+  const targetYaw=Math.atan2(nx,nz);
+  let dy=targetYaw-r.rotation.y;
+  dy=Math.atan2(Math.sin(dy),Math.cos(dy));
+  r.rotation.y+=dy*Math.min(1,dt*5);
+  // walk animation
+  const ud=r.userData;
+  const walk=Math.sin(t*8+ud.phase);
+  ud.armL.rotation.x=walk*.5;
+  ud.armR.rotation.x=-walk*.5;
+  ud.legL.rotation.x=-walk*.6;
+  ud.legR.rotation.x=walk*.6;
+  // bob
+  r.position.y=Math.abs(Math.sin(t*8+ud.phase))*.04;
+  // eye glow pulse
+  const pulse=.6+.4*Math.sin(t*3+ud.phase);
+  ud.glow.color.setHex(ud.eyeColor);
+  ud.glow.opacity=pulse;
+}
+// make eye material transparent for pulsing
+robots.forEach(r=>{const ud=r.userData;ud.glow.transparent=true;});
+
 // ---------- Render Loop ----------
 const clock=new T.Clock();
 (function loop(){
   requestAnimationFrame(loop);
   const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+
+  // move robots
+  robotPaths.forEach(rp=>moveRobot(rp,dt,t));
+
+  // idle animation for people
+  people.forEach(p=>{
+    const ud=p.userData;
+    // subtle breathing / head bob
+    const b=Math.sin(t*1.5+ud.phase)*.012;
+    p.position.y+=b*.05;
+    // slight head turn
+    ud.head.rotation.y=Math.sin(t*.7+ud.phase)*.15;
+    // arm idle
+    ud.armL.rotation.z=Math.sin(t*1.2+ud.phase)*.05;
+    ud.armR.rotation.z=-Math.sin(t*1.2+ud.phase)*.05;
+    // standing person leg shift
+    if(!ud.seated && ud.legL){
+      ud.legL.rotation.x=Math.sin(t*.8+ud.phase)*.05;
+      ud.legR.rotation.x=-Math.sin(t*.8+ud.phase)*.05;
+    }
+  });
+
   if(tw){
     tw.t+=dt;
     if(tw.t<tw.dur){
@@ -363,7 +542,7 @@ const clock=new T.Clock();
     yaw-=tr*dt*1.6;
     if(f||r){if(auto)stopTour();pos.x+=(-Math.sin(yaw)*f+Math.cos(yaw)*r)*2.2*dt;pos.z+=(-Math.cos(yaw)*f-Math.sin(yaw)*r)*2.2*dt}
     pos.x=clamp(pos.x,-HW+.3,HW-.3);pos.z=clamp(pos.z,-HD+.3,HD-.3);
-    pos.y+=(1.8+tier(pos.z)-pos.y)*Math.min(1,dt*8);
+    pos.y+=(2.0+tier(pos.z)-pos.y)*Math.min(1,dt*8);
   }
   camera.position.copy(pos);camera.rotation.set(pitch,yaw,0);
   const on=Math.sin(t*5)>0;
